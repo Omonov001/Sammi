@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { content } from "@/constants"
-import { ArrowUpRight, CalendarDays, Clock, Facebook, Link2, Linkedin, Minus, Send, Twitter } from "lucide-react"
+import { ArrowUpRight, CalendarDays, Clock, Minus } from "lucide-react"
 import Image from "next/image";
 import parse from 'html-react-parser';
 import Link from "next/link";
@@ -25,11 +25,8 @@ export async function generateMetadata({
 }
 
 async function SlugPage({ params }: { params: { slug: string } }) {
-    const { slug } = await params
-
-    const blog = await getDetailedBlog(params.slug)
-
-    console.log(blog)
+    const { slug } = params  // <-- await olib tashlandi
+    const blog = await getDetailedBlog(slug)
 
     return (
         <div className="pt-[15vh] max-w-5xl mx-auto">
@@ -60,11 +57,12 @@ async function SlugPage({ params }: { params: { slug: string } }) {
                     <p>{format(new Date(blog.createdAt), 'MMM dd, yyyy')}</p>
                 </div>
             </div>
+
             <Image
                 src={blog.image.url}
                 alt="alt"
-                width={`1120`}
-                height={`595`}
+                width={1120}
+                height={595}
                 className="mt-4 rounded-md"
             />
 
@@ -99,7 +97,7 @@ async function SlugPage({ params }: { params: { slug: string } }) {
                     >
                         <span>See all posts by this author</span>
                         <ArrowUpRight />
-                    </ Link>
+                    </Link>
                 </div>
             </div>
         </div>
