@@ -3,22 +3,22 @@ import { getDetailedBlog } from "@/service/blog.service"
 import { getBlogsByTag } from "@/service/tag.service"
 import { Dot, Home } from "lucide-react"
 import Link from "next/link"
-
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const blog = await getBlogsByTag(params.slug)
-  return {
-    title: blog.name,
-  }
+interface PageProps {
+  params: Promise<{ slug: string }>
 }
 
-async function page({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
   const tag = await getBlogsByTag(slug)
 
+  return {
+    title: tag.name,
+  }
+}
+
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params
+  const tag = await getBlogsByTag(slug)
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -30,7 +30,7 @@ async function page({ params }: { params: Promise<{ slug: string }> }) {
         <div className="flex gap-1 items-center mt-4">
           <Home className="w-4 h-4" />
           <Link
-            href={'/'}
+            href="/"
             className="opacity-90 hover:underline hover:opacity-100"
           >
             Home
@@ -39,6 +39,7 @@ async function page({ params }: { params: Promise<{ slug: string }> }) {
           <p className="text-muted-foreground">Tags</p>
         </div>
       </div>
+
       <div className="grid grid-cols-2 max-md:grid-cols-1 gap-x-4 gap-y-24 mt-24">
         {tag.blogs.map(blog => (
           <BlogCard key={blog.title} {...blog} isVertical />
@@ -47,5 +48,3 @@ async function page({ params }: { params: Promise<{ slug: string }> }) {
     </div>
   )
 }
-
-export default page

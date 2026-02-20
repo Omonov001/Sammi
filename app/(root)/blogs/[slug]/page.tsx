@@ -9,24 +9,28 @@ import { getReadingTime } from "@/lib/utils";
 import { format } from "date-fns";
 import ShareBtns from "../../_components/share-btns";
 
-export async function generateMetadata({
-    params,
-}: {
-    params: { slug: string }
-}) {
-    const blog = await getDetailedBlog(params.slug)
-    return {
-        title: blog.title,
-        description: blog.description,
-        openGraph: {
-            images: blog.image.url,
-        }
-    }
+interface PageProps {
+  params: Promise<{ slug: string }>
 }
 
-async function SlugPage({ params }: { params: { slug: string } }) {
-    const { slug } = params  // <-- await olib tashlandi
-    const blog = await getDetailedBlog(slug)
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+
+  const blog = await getDetailedBlog(slug);
+
+  return {
+    title: blog.title,
+    description: blog.description,
+    openGraph: {
+      images: blog.image.url,
+    },
+  };
+}
+
+export default async function SlugPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  const blog = await getDetailedBlog(slug);
 
     return (
         <div className="pt-[15vh] max-w-5xl mx-auto">
@@ -103,5 +107,3 @@ async function SlugPage({ params }: { params: { slug: string } }) {
         </div>
     )
 }
-
-export default SlugPage
