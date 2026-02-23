@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 import { ArrowUpRight, CalendarDays, Clock, Minus } from "lucide-react"
 import Image from "next/image";
