@@ -1,3 +1,5 @@
+export const revalidate = 60
+
 import BlogCard from '@/components/cards/blog'
 import BgArrow from '@/components/shared/bg-arrow'
 import { getBlogs } from '@/service/blog.service'

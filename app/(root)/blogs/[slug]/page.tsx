@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { content } from "@/constants"
+export const revalidate = 60
+
 import { ArrowUpRight, CalendarDays, Clock, Minus } from "lucide-react"
 import Image from "next/image";
 import parse from 'html-react-parser';

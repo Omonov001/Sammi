@@ -1,86 +1,93 @@
 import request, { gql } from 'graphql-request'
-import { IArchivedBlog, IBlog } from '@/types'  // index.ts ichidan avtomatik topadi
-import { cache } from 'react'
+import { IArchivedBlog, IBlog } from '@/types'
 
 const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT!
 
+// ================= BLOG LIST =================
 export const getBlogs = async (): Promise<IBlog[]> => {
   const query = gql`
-  query MyQuery {
-    blogs(where: {}) {
-      title
-      createdAt
-      author {
-        name
+    query MyQuery {
+      blogs {
+        title
+        createdAt
+        author {
+          name
+          image { url }
+        }
+        category { name slug }
+        description
+        tag { name slug }
         image { url }
+        content { html }
+        slug
       }
-      category { name slug }
-      description
-      tag { name slug }
-      image { url }
-      content { html }
-      slug
     }
-  }
-`
+  `
 
-  const { blogs } = await request<{ blogs: IBlog[] }>(graphqlAPI, query)
+  const { blogs } = await request<{ blogs: IBlog[] }>(
+    graphqlAPI,
+    query
+  )
 
   return blogs
 }
 
-export const getDetailedBlog = cache(async (slug: string) => {
+
+// ================= BLOG DETAIL =================
+export const getDetailedBlog = async (slug: string): Promise<IBlog> => {
   const query = gql`
-  query MyQuery($slug: String!) {
-    blog(where: { slug: $slug }) {
-      author {
-        name
-        image {
-          url
+    query MyQuery($slug: String!) {
+      blog(where: { slug: $slug }) {
+        author {
+          name
+          image { url }
+          bio
+          id
         }
-        bio
-        id
-      }
-      content {
-        html
-      }
-      createdAt
-      image {
-        url
-      }
-      slug
-      tag {
-        name
+        content { html }
+        createdAt
+        image { url }
         slug
+        tag { name slug }
+        title
       }
-      title
     }
-  }
-`
-  const { blog } = await request<{ blog: IBlog }>(graphqlAPI, query, { slug })
+  `
+
+  const { blog } = await request<{ blog: IBlog }>(
+    graphqlAPI,
+    query,
+    { slug }
+  )
 
   return blog
-})
+}
 
+
+// ================= SEARCH =================
 export const getSearchBlogs = async (title: string) => {
   const query = gql`
     query MyQuery($title: String!) {
-      blogs(where: { title_contains: $title } ) {
+      blogs(where: { title_contains: $title }) {
         title
-        image {
-          url
-        }
+        image { url }
         slug
         createdAt
       }
     }
   `
 
-  const { blogs } = await request<{ blogs: IBlog[] }>(graphqlAPI, query, { title })
+  const { blogs } = await request<{ blogs: IBlog[] }>(
+    graphqlAPI,
+    query,
+    { title }
+  )
 
   return blogs
 }
 
+
+// ================= ARCHIVE =================
 export const getArchiveBlogs = async (): Promise<IArchivedBlog[]> => {
   const query = gql`
     query MyQuery {
@@ -111,7 +118,5 @@ export const getArchiveBlogs = async (): Promise<IArchivedBlog[]> => {
     {}
   )
 
-  const results: IArchivedBlog[] = Object.values(filteredBlogs)
-
-  return results
+  return Object.values(filteredBlogs)
 }
